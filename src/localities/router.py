@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
+from typing import List, Annotated
 from src.localities import schemas, service
 from src.database import get_db
 
@@ -8,7 +8,7 @@ router = APIRouter(prefix="/localities", tags=["Localities"])
 
 @router.post("/", response_model=schemas.LocalityResponse)
 async def create_locality(
-    data: schemas.LocalityCreate, 
+    data: Annotated[schemas.LocalityCreate, Depends()], 
     db: AsyncSession = Depends(get_db)
 ):
     return await service.create_locality(db, data)
@@ -16,7 +16,7 @@ async def create_locality(
 @router.put("/{locality_id}", response_model=schemas.LocalityResponse)
 async def update_locality(
     locality_id: int, 
-    data: schemas.LocalityUpdate, 
+    data: Annotated[schemas.LocalityUpdate, Depends()], 
     db: AsyncSession = Depends(get_db)
 ):
     locality = await service.update_locality(db, locality_id, data)

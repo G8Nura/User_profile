@@ -8,6 +8,10 @@ from alembic import context
 from src.database import Base
 from src.config import settings
 
+from src.localities.models import *
+from src.profile.models import *
+
+
 DATABASE_URL = settings.DATABASE_URL
 config = context.config
 
@@ -15,6 +19,9 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 target_metadata = Base.metadata
+
+
+config.set_main_option("sqlalchemy.url", settings.DATABASE_URL.replace("+asyncpg", ""))
 
 
 def run_migrations_offline():

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
+from typing import List, Annotated
 from src.profile import schemas, service
 from src.database import get_db
 
@@ -8,7 +8,7 @@ router = APIRouter(prefix="/profile", tags=["Profile"])
 
 @router.post("/", response_model=schemas.ProfileResponse)
 async def create_profile(
-    data: schemas.ProfileCreate, 
+    data: Annotated[schemas.ProfileCreate, Depends()],
     db: AsyncSession = Depends(get_db)
 ):
     return await service.create_profile(db, data)
@@ -16,7 +16,7 @@ async def create_profile(
 @router.put("/{profile_id}", response_model=schemas.ProfileResponse)
 async def update_profile(
     profile_id: int, 
-    data: schemas.ProfileUpdate, 
+    data: Annotated[schemas.ProfileUpdate, Depends()], 
     db: AsyncSession = Depends(get_db)
 ):
     profile = await service.update_profile(db, profile_id, data)
